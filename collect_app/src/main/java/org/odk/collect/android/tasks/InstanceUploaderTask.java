@@ -93,7 +93,7 @@ public class InstanceUploaderTask extends AsyncTask<Long, Integer, InstanceUploa
      * @return false if credentials are required and we should terminate immediately.
      */
     private boolean uploadOneSubmission(String urlString, String id, String instanceFilePath,
-            Uri toUpdate, HttpContext localContext, Map<Uri, Uri> uriRemap, Outcome outcome) {
+                                        Uri toUpdate, HttpContext localContext, Map<Uri, Uri> uriRemap, Outcome outcome) {
 
         Collect.getInstance().getActivityLogger().logAction(this, urlString, instanceFilePath);
 
@@ -522,16 +522,20 @@ public class InstanceUploaderTask extends AsyncTask<Long, Integer, InstanceUploa
     protected Outcome doInBackground(Long... values) {
         Outcome outcome = new Outcome();
 
-        String selection = InstanceColumns._ID + "=?";
+        StringBuffer selectionBuf = new StringBuffer(InstanceColumns._ID + " IN (");
         String[] selectionArgs = new String[(values == null) ? 0 : values.length];
         if (values != null) {
             for (int i = 0; i < values.length; i++) {
-                if (i != values.length - 1) {
-                    selection += " or " + InstanceColumns._ID + "=?";
+                if (i > 0) {
+                    selectionBuf.append(",");
                 }
+                selectionBuf.append("?");
                 selectionArgs[i] = values[i].toString();
             }
         }
+        selectionBuf.append(")");
+        String selection = selectionBuf.toString();
+        Log.i(t, "Getting instances " + selection);
 
         String deviceId = new PropertyManager(Collect.getInstance().getApplicationContext())
                 .getSingularProperty(PropertyManager.OR_DEVICE_ID_PROPERTY);
@@ -694,7 +698,7 @@ public class InstanceUploaderTask extends AsyncTask<Long, Integer, InstanceUploa
 
 
     public static void copyToBytes(InputStream input, OutputStream output,
-            int bufferSize) throws IOException {
+                                   int bufferSize) throws IOException {
         byte[] buf = new byte[bufferSize];
         int bytesRead = input.read(buf);
         while (bytesRead != -1) {
