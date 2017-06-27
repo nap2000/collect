@@ -59,8 +59,6 @@ public final class AdminKeys {
 
     public static final String KEY_TIMER_LOG_ENABLED           = "change_timer_log";
 
-    public static final String KEY_TIMER_LOG_ENABLED  = "timer_log";
-
     /**
      * The admin preferences allow removing general preferences. This array contains
      * tuples of admin keys and the keys of general preferences that are removed if the admin
