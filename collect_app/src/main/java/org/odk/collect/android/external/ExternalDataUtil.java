@@ -137,11 +137,11 @@ public final class ExternalDataUtil {
         }
     }
 
-    public static ArrayList<SelectChoice> populateExternalChoices(FormEntryPrompt formEntryPrompt,
-            XPathFuncExpr xpathfuncexpr) {
+    public static List<SelectChoice> populateExternalChoices(FormEntryPrompt formEntryPrompt,
+                                                                  XPathFuncExpr xpathfuncexpr) {
+        List<SelectChoice> returnedChoices = new ArrayList<SelectChoice>();
         try {
             List<SelectChoice> selectChoices = formEntryPrompt.getSelectChoices();
-            ArrayList<SelectChoice> returnedChoices = new ArrayList<SelectChoice>();
             for (SelectChoice selectChoice : selectChoices) {
                 String value = selectChoice.getValue();
                 if (isAnInteger(value)) {
@@ -203,7 +203,7 @@ public final class ExternalDataUtil {
      * columns as values
      */
     public static LinkedHashMap<String, String> createMapWithDisplayingColumns(String valueColumn,
-            String displayColumns) {
+                                                                               String displayColumns) {
         valueColumn = valueColumn.trim();
 
         LinkedHashMap<String, String> columns = new LinkedHashMap<String, String>();
@@ -237,8 +237,21 @@ public final class ExternalDataUtil {
         return values;
     }
 
+    public static List<String> createListOfValues(String valueString) {
+        List<String> values = new ArrayList<String>();
+
+        List<String> commaSplitParts = splitTrimmed(valueString, COLUMN_SEPARATOR,
+                FALLBACK_COLUMN_SEPARATOR);
+
+        for (String commaSplitPart : commaSplitParts) {
+            values.add(commaSplitPart);
+        }
+
+        return values;
+    }
+
     protected static List<String> splitTrimmed(String displayColumns, String separator,
-            String fallbackSeparator) {
+                                               String fallbackSeparator) {
         List<String> commaSplitParts = splitTrimmed(displayColumns, separator);
 
         // SCTO-584: Fall back to a space-separated list
